@@ -1,0 +1,251 @@
+{
+ "definitions": {
+  "Create.Folder": {
+   "kind": "service",
+   "@Capabilities.BatchSupported": false,
+   "@Capabilities.KeyAsSegmentSupported": true,
+   "@Core.Description": "Create Folder",
+   "@Core.SchemaVersion": "1.0",
+   "@Core.LongDescription": "It creates a folder object of the speciﬁed type in the speciﬁed location. It should not have repetitive folder names and properties that must be applied to the newly created folder should be present"
+  },
+  "Create.Folder.browser__root_post": {
+   "kind": "action",
+   "params": {
+    "repository_id": {
+     "type": "cds.String",
+     "@description": "The repository to be used is identified using repository id",
+     "@openapi.in": "path"
+    },
+    "body": {
+     "@openapi.contentType": "multipart/form-data",
+     "elements": {
+      "cmisaction": {
+       "@description": "In order to perform this particluar operation in a Repository,cmisaction parameter in an HTTP POST request must be:createFolder",
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "createFolder"
+      },
+      "propertyId_0_": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "cmis:name",
+       "@openapi.name": "propertyId[0]"
+      },
+      "propertyValue_0_": {
+       "@description": "Includes the value of propertyid[0]",
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "test",
+       "@openapi.name": "propertyValue[0]"
+      },
+      "propertyId_1_": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "cmis:objectTypeId",
+       "@openapi.name": "propertyId[1]"
+      },
+      "propertyValue_1_": {
+       "@description": "Includes the value of propertyid[1]",
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "cmis:folder",
+       "@openapi.name": "propertyValue[1]"
+      },
+      "succinct": {
+       "@description": "Acts as a query parameter",
+       "type": "cds.Boolean"
+      }
+     },
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Create Folder",
+   "@Core.Description": "Creates a folder in the root location of a repository",
+   "@Core.LongDescription": "It creates a folder object of the speciﬁed type in the repository's root folder. It should not have repetitive folder names and properties that must be applied to the newly created folder should be present",
+   "@openapi.path": "/browser/{repository_id}/root",
+   "returns": {
+    "type": "Create.Folder_types.object"
+   }
+  },
+  "Create.Folder.browser__root__post": {
+   "kind": "action",
+   "params": {
+    "repository_id": {
+     "type": "cds.String",
+     "@description": "The repository to be used is identified using repository id",
+     "@openapi.in": "path"
+    },
+    "directory_path": {
+     "type": "cds.String",
+     "@description": "Path to create the folder.",
+     "@openapi.in": "path"
+    },
+    "body": {
+     "@openapi.contentType": "multipart/form-data",
+     "elements": {
+      "cmisaction": {
+       "@description": "In order to perform this particluar operation in a Repository,cmisaction parameter in an HTTP POST request must be:createFolder",
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "createFolder"
+      },
+      "propertyId_0_": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "cmis:name",
+       "@openapi.name": "propertyId[0]"
+      },
+      "propertyValue_0_": {
+       "@description": "Includes the value of propertyid[0]",
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "test",
+       "@openapi.name": "propertyValue[0]"
+      },
+      "propertyId_1_": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "cmis:objectTypeId",
+       "@openapi.name": "propertyId[1]"
+      },
+      "propertyValue_1_": {
+       "@description": "Includes the value of propertyid[1]",
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "cmis:folder",
+       "@openapi.name": "propertyValue[1]"
+      },
+      "succinct": {
+       "@description": "Acts as a query parameter",
+       "type": "cds.Boolean"
+      }
+     },
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Create Folder",
+   "@Core.Description": "Creates a folder in the speciﬁed location of a repository",
+   "@Core.LongDescription": "It creates a folder object of the speciﬁed type in the speciﬁed location. It should not have repetitive folder names and properties that must be applied to the newly created folder should be present",
+   "@openapi.path": "/browser/{repository_id}/root/{directory_path}",
+   "returns": {
+    "type": "Create.Folder_types.object"
+   }
+  },
+  "Create.Folder_types.object": {
+   "elements": {
+    "succinctProperties": {
+     "elements": {
+      "cmis_objectId": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "-R5rxKz01Ysn21yxQ72NuzRBlEvMDowHnEDQjS5xSwQ",
+       "@openapi.name": "cmis:objectId"
+      },
+      "sap_parentIds": {
+       "items": {
+        "type": "Create.Folder.anonymous.type0"
+       },
+       "@openapi.name": "sap:parentIds"
+      },
+      "cmis_name": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "test",
+       "@openapi.name": "cmis:name"
+      },
+      "cmis_lastModifiedBy": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "sb-1e6079ca-5822-41e0-9789-93a2f066d534!b32286|sdm-di-SDM_DI_QUAL-qual!b6551",
+       "@openapi.name": "cmis:lastModifiedBy"
+      },
+      "cmis_objectTypeId": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "cmis:folder",
+       "@openapi.name": "cmis:objectTypeId"
+      },
+      "cmis_lastModificationDate": {
+       "type": "cds.Decimal",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": 1625157532241,
+       "@openapi.name": "cmis:lastModificationDate"
+      },
+      "cmis_createdBy": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "sb-1e6079ca-5822-41e0-9789-93a2f066d534!b32286|sdm-di-SDM_DI_QUAL-qual!b6551",
+       "@openapi.name": "cmis:createdBy"
+      },
+      "cmis_baseTypeId": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "cmis:folder",
+       "@openapi.name": "cmis:baseTypeId"
+      },
+      "cmis_parentId": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "2e2ccfd00007511ba28e9d06",
+       "@openapi.name": "cmis:parentId"
+      },
+      "sap_owner": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": "sb-1e6079ca-5822-41e0-9789-93a2f066d534!b32286|sdm-di-SDM_DI_QUAL-qual!b6551",
+       "@openapi.name": "sap:owner"
+      },
+      "cmis_creationDate": {
+       "type": "cds.Decimal",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": 1625157532241,
+       "@openapi.name": "cmis:creationDate"
+      },
+      "cmis_changeToken": {
+       "type": "cds.String",
+       "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+       "@Core.Example.Value": 2,
+       "@openapi.name": "cmis:changeToken"
+      }
+     }
+    },
+    "exactACL": {
+     "type": "cds.Boolean"
+    }
+   },
+   "kind": "type"
+  },
+  "Create.Folder_types.error": {
+   "elements": {
+    "message": {
+     "@description": "error",
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "internal server error"
+    }
+   },
+   "kind": "type"
+  },
+  "Create.Folder_types.invalidflow": {
+   "elements": {
+    "message": {
+     "@description": "error",
+     "type": "cds.String"
+    },
+    "status": {
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Create.Folder.anonymous.type0": {
+   "type": "cds.String",
+   "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+   "@Core.Example.Value": "2e2ccfd00007511ba28e9d06",
+   "kind": "type"
+  }
+ },
+ "meta": {
+  "creator": "cds-import-openapi"
+ }
+}

@@ -1,0 +1,1083 @@
+{
+ "definitions": {
+  "Administrative.Operations": {
+   "kind": "service",
+   "@Capabilities.BatchSupported": false,
+   "@Capabilities.KeyAsSegmentSupported": true,
+   "@Core.Description": "Administrative Operations",
+   "@Core.SchemaVersion": "1.0.0",
+   "@Core.LongDescription": "These APIs uses the SAP Document Management service, Integration Option to perform various administrative operations. Using these APIs, you can perform various actions like onboard, offboard, edit, synchronize, call for repository and access the Rest APIs to get the usage details of processed repositories."
+  },
+  "Administrative.Operations.rest_v2_repositories": {
+   "kind": "function",
+   "params": {},
+   "@Common.Label": "Repository Management",
+   "@Core.Description": "Retrieve all added repositories",
+   "@Core.LongDescription": "The API retrieves all repositories you have added by making a GET request. If only one repository exists, the response will be an object; if multiple repositories exist, the response will be an array.",
+   "@openapi.path": "/rest/v2/repositories",
+   "returns": {
+    "type": "Administrative.Operations_types.List_a_repo"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositories_post": {
+   "kind": "action",
+   "params": {
+    "body": {
+     "elements": {},
+     "@openapi.oneOf": "[{\"$ref\":\"#/components/schemas/Internal_Repo_Request\"},{\"$ref\":\"#/components/schemas/External_Repo_Request\"}]",
+     "@open": true,
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Repository Management",
+   "@Core.Description": "Onboards new repositories with specified parameters.",
+   "@Core.LongDescription": "The Repository Management API allows you to seamlessly onboard new repositories within your environment. By making a POST request with the appropriate parameters, a new repository is created.",
+   "@openapi.path": "/rest/v2/repositories",
+   "returns": {
+    "type": "Administrative.Operations_types.Repository"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositories_delete": {
+   "kind": "action",
+   "params": {},
+   "@Common.Label": "Repository Management",
+   "@Core.Description": "Deletes all onboarded repositories",
+   "@Core.LongDescription": "The API deletes all onboarded repositories using a DELETE request. A successful response indicates that all repositories have been removed.",
+   "@openapi.method": "DELETE",
+   "@openapi.path": "/rest/v2/repositories",
+   "returns": {
+    "type": "Administrative.Operations_types.Delete_repos"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositories_": {
+   "kind": "function",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Repository Management",
+   "@Core.Description": "Retrieve specific repository details",
+   "@Core.LongDescription": "The API retrieves the details of a specific repository using a GET request with the repository ID. A successful response returns the information for that particular repository.",
+   "@openapi.path": "/rest/v2/repositories/{id}",
+   "returns": {
+    "type": "Administrative.Operations_types.RepoAndConnectionInfos"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositories__put": {
+   "kind": "action",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    },
+    "body": {
+     "elements": {},
+     "@openapi.oneOf": "[{\"$ref\":\"#/components/schemas/Update_repo\"},{\"$ref\":\"#/components/schemas/Update_repo_external\"}]",
+     "@open": true,
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Repository Management",
+   "@Core.Description": "Update metadata parameters of a repository",
+   "@Core.LongDescription": "Updates the metadata parameters of a repository using a PUT request. A successful response reflects the new parameters for your repository.",
+   "@openapi.method": "PUT",
+   "@openapi.path": "/rest/v2/repositories/{id}",
+   "returns": {
+    "type": "Administrative.Operations_types.Repository"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositories__delete": {
+   "kind": "action",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Repository Management",
+   "@Core.Description": "Delete a repository",
+   "@Core.LongDescription": "Deletes a specific repository using a DELETE request with a unique repository ID. A successful response confirms the removal of the specified repository.",
+   "@openapi.method": "DELETE",
+   "@openapi.path": "/rest/v2/repositories/{id}",
+   "returns": {
+    "type": "Administrative.Operations_types.Delete_repo"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositories_sync": {
+   "kind": "function",
+   "params": {},
+   "@Common.Label": "Repository Management",
+   "@Core.Description": "Sync metadata of all repositories",
+   "@Core.LongDescription": "Syncs the metadata of all repositories using a GET request as an administrator. A successful response confirms the synchronization with the Document Management Service, Integration Option.",
+   "@openapi.path": "/rest/v2/repositories/sync",
+   "returns": {
+    "type": "Administrative.Operations_types.Sync_repos"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositories_sync_": {
+   "kind": "function",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Repository Management",
+   "@Core.Description": "Sync metadata of a specific repository",
+   "@Core.LongDescription": "Syncs the metadata of a specific repository using a GET request as an administrator. A successful response confirms the synchronization with Document Management Service, Integration Option.",
+   "@openapi.path": "/rest/v2/repositories/sync/{id}",
+   "returns": {
+    "type": "Administrative.Operations_types.Sync_repos"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositories_count": {
+   "kind": "function",
+   "params": {},
+   "@Common.Label": "Repository Management",
+   "@Core.Description": "Count all added repositories",
+   "@Core.LongDescription": "The API returns the total number of repositories you have added by making a GET request. A successful response provides a count of all repositories.",
+   "@openapi.path": "/rest/v2/repositories/count",
+   "returns": {
+    "type": "Administrative.Operations_types.Count"
+   }
+  },
+  "Administrative.Operations.rest_v2_usage_api": {
+   "kind": "function",
+   "params": {},
+   "@Common.Label": "Usage Statistics",
+   "@Core.Description": "Check API usage of service instance",
+   "@Core.LongDescription": "Checks the API usage of a service instance using a GET request. A successful response provides the number of API calls made by the service instance. By default, the response shows the API calls made in the current month by each tenant consuming the service instance.",
+   "@openapi.path": "/rest/v2/usage/api",
+   "returns": {
+    "type": "Administrative.Operations_types.Usage_api"
+   }
+  },
+  "Administrative.Operations.rest_v2_usage_storage": {
+   "kind": "function",
+   "params": {
+    "unit": {
+     "type": "cds.String",
+     "@description": "Allowed values are KB, MB, GB, and TB; if this optional query parameter is not specified, the default unit is Bytes.",
+     "@openapi.in": "query"
+    },
+    "fromMonth": {
+     "type": "cds.String",
+     "@description": "Enter the month's numeric value. If fromYear is not specified, the current year is presumed.",
+     "@openapi.in": "query"
+    },
+    "fromYear": {
+     "type": "cds.String",
+     "@description": "Enter the year; the month and year must be no more than 6 months old from the current month and year",
+     "@openapi.in": "query"
+    }
+   },
+   "@Common.Label": "Usage Statistics",
+   "@Core.Description": "Check storage usage of service instance",
+   "@Core.LongDescription": "Checks the storage usage of a service instance using a GET request. A successful response returns the bytes consumed by the service instance. By default, it shows the storage usage for each repository by the consuming tenants in the current month.",
+   "@openapi.path": "/rest/v2/usage/storage",
+   "returns": {
+    "type": "Administrative.Operations_types.Usage_storage"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositoryOffBoard__cmisaction_repositoryOffBoard_post": {
+   "kind": "action",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Repository Offboard (Deprecated)",
+   "@Core.Description": "Offboard Repository",
+   "@Core.LongDescription": "A successful response to the POST request returns the repository offboard request submitted.",
+   "@openapi.path": "/rest/v2/repositoryOffBoard/{id}?cmisaction=repositoryOffBoard",
+   "returns": {
+    "type": "cds.String"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositoryOffBoard__cmisselector_repositoryStatus": {
+   "kind": "function",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Repository Offboard (Deprecated)",
+   "@Core.Description": "Status of Repository Offboard",
+   "@Core.LongDescription": "A successful response to the GET request for repository offboard status.",
+   "@openapi.path": "/rest/v2/repositoryOffBoard/{id}?cmisselector=repositoryStatus",
+   "returns": {
+    "type": "cds.Boolean"
+   }
+  },
+  "Administrative.Operations.rest_v2_repositoryOffBoard__cmisaction_getRepositoryDocument": {
+   "kind": "function",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Repository Offboard (Deprecated)",
+   "@Core.Description": "Download of offboarded repository",
+   "@Core.LongDescription": "A successful response to the GET request to download the offboarded repository.",
+   "@openapi.path": "/rest/v2/repositoryOffBoard/{id}?cmisaction=getRepositoryDocument",
+   "returns": {
+    "@openapi.contentType": "text/plain",
+    "type": "cds.String",
+    "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+    "@Core.Example.Value": "Downloaded"
+   }
+  },
+  "Administrative.Operations.rest_v3_repositories_export__post": {
+   "kind": "action",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Repository Export",
+   "@Core.Description": "Initiate repository metadata export",
+   "@Core.LongDescription": "A successful response to a POST request returns the status of the repository metadata export initiation.",
+   "@openapi.path": "/rest/v3/repositories/export/{id}",
+   "returns": {
+    "type": "cds.String"
+   }
+  },
+  "Administrative.Operations.rest_v3_repositories_export_status_": {
+   "kind": "function",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Repository Export",
+   "@Core.Description": "Status of repository metadata export",
+   "@Core.LongDescription": "A successful response to a GET request for the status of a specific metadata export request submitted for the repository id",
+   "@openapi.path": "/rest/v3/repositories/export/status/{id}",
+   "returns": {
+    "type": "Administrative.Operations_types.Export_Status"
+   }
+  },
+  "Administrative.Operations.rest_v3_repositories_export_download__": {
+   "kind": "function",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    },
+    "packageId": {
+     "type": "cds.String",
+     "@description": "Package ID received in export status",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Repository Export",
+   "@Core.Description": "Download exported metadata of the repository with a valid packageId",
+   "@Core.LongDescription": "A successful response to a GET request to download the exported zip file with the packageId.",
+   "@openapi.path": "/rest/v3/repositories/export/download/{id}/{packageId}",
+   "returns": {
+    "@openapi.contentType": "text/plain",
+    "type": "cds.String",
+    "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+    "@Core.Example.Value": "Downloaded"
+   }
+  },
+  "Administrative.Operations.rest_v2_deleted_repositories": {
+   "kind": "function",
+   "params": {},
+   "@Common.Label": "Service Restore",
+   "@Core.Description": "Retrieve all deleted repositories",
+   "@Core.LongDescription": "A successful response to the GET request returns all the repositories you have deleted. If there is only one deleted repository, the response will be an object. If there are two or more deleted repositories, the response will be an array.",
+   "@openapi.path": "/rest/v2/deleted/repositories",
+   "returns": {
+    "type": "Administrative.Operations_types.List_a_repo"
+   }
+  },
+  "Administrative.Operations.rest_v2_deleted_repositories__restore_post": {
+   "kind": "action",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Repository id",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Service Restore",
+   "@Core.Description": "Restore a particular repository",
+   "@Core.LongDescription": "A successful response to the post request indicates that the deleted repository has been successfully restored.",
+   "@openapi.path": "/rest/v2/deleted/repositories/{id}/restore",
+   "returns": {
+    "type": "Administrative.Operations_types.Repository"
+   }
+  },
+  "Administrative.Operations.rest_v2_deleted_instances__restore_post": {
+   "kind": "action",
+   "params": {
+    "instance_id": {
+     "type": "cds.String",
+     "@description": "Id of the deleted service instance",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Service Restore",
+   "@Core.Description": "Restore a deleted service instance",
+   "@Core.LongDescription": "A successful response to the post request indicates that the repositories of the deleted service instance has been successfully restored to the present service instance.",
+   "@openapi.path": "/rest/v2/deleted/instances/{instance_id}/restore",
+   "returns": {
+    "type": "Administrative.Operations_types.Restore_instance_success"
+   }
+  },
+  "Administrative.Operations.rest_v2_configs_post": {
+   "kind": "action",
+   "params": {
+    "body": {
+     "type": "Administrative.Operations_types.Create_Config",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Repository Configuration",
+   "@Core.Description": "Configure repository settings",
+   "@Core.LongDescription": "The API allows you to set specific parameters to manage your repository settings effectively. A successful POST request will create a configuration based on the parameters provided. \n\n **blockedFileExtensions** - List of file extensions that are blocked during upload. \n\n **tempspaceMaxContentSize** - Specifies the maximum file size that can be uploaded.  \n\n **isCrossDomainMappingAllowed** - Manage cross-domain mapping if your domain is different from the Google Workspace domain.",
+   "@openapi.path": "/rest/v2/configs",
+   "returns": {
+    "type": "Administrative.Operations_types.Config_Detail"
+   }
+  },
+  "Administrative.Operations.rest_v2_configs": {
+   "kind": "function",
+   "params": {},
+   "@Common.Label": "Repository Configuration",
+   "@Core.Description": "Retrieve repository configurations",
+   "@Core.LongDescription": "A successful response to the GET request returns all Configs.",
+   "@openapi.path": "/rest/v2/configs",
+   "returns": {
+    "type": "Administrative.Operations_types.Configs_api"
+   }
+  },
+  "Administrative.Operations.rest_v2_configs__put": {
+   "kind": "action",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Config Id",
+     "@openapi.in": "path"
+    },
+    "body": {
+     "type": "Administrative.Operations_types.Update_Config",
+     "@openapi.in": "body"
+    }
+   },
+   "@Common.Label": "Repository Configuration",
+   "@Core.Description": "Update repository configuration parameters",
+   "@Core.LongDescription": "A successful response to the PUT request reflects the updated parameters for your repository configuration.",
+   "@openapi.method": "PUT",
+   "@openapi.path": "/rest/v2/configs/{id}",
+   "returns": {
+    "type": "Administrative.Operations_types.Config_Detail"
+   }
+  },
+  "Administrative.Operations.rest_v2_configs__delete": {
+   "kind": "action",
+   "params": {
+    "id": {
+     "type": "cds.String",
+     "@description": "Config Id",
+     "@openapi.in": "path"
+    }
+   },
+   "@Common.Label": "Repository Configuration",
+   "@Core.Description": "Delete a repository configuration",
+   "@Core.LongDescription": "A successful response to the DELETE request removes the configuration.",
+   "@openapi.method": "DELETE",
+   "@openapi.path": "/rest/v2/configs/{id}",
+   "returns": {
+    "type": "Administrative.Operations_types.Delete_Config"
+   }
+  },
+  "Administrative.Operations_types.invalid_repo": {
+   "elements": {
+    "message": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "There is no repository with the given ID:a123"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.error": {
+   "elements": {
+    "message": {
+     "@description": "Error message",
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "Internal server error."
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Count": {
+   "elements": {
+    "count": {
+     "type": "cds.Integer",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": 3
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Connection": {
+   "elements": {
+    "type": {
+     "type": "cds.String"
+    },
+    "destination": {
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.RepositoryParams": {
+   "elements": {
+    "paramName": {
+     "@description": "contentServer - Specifies the Content Server destination name to bypass the ABAP layer for SAP S/4HANA repositories.  useContentServerDownload - Enables downloading via the content server.",
+     "type": "cds.String"
+    },
+    "paramValue": {
+     "@description": "contentServer - Content Server Destination Name. useContentServerDownload - True or False",
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Internal_Repo_Request": {
+   "elements": {
+    "displayName": {
+     "@description": "Name of the Repository.",
+     "type": "cds.String",
+     "@mandatory": true
+    },
+    "description": {
+     "@description": "Additional description for the Repository.",
+     "type": "cds.String"
+    },
+    "repositoryType": {
+     "@description": "Specifies the type of repository, e.g., internal.",
+     "type": "cds.String",
+     "@mandatory": true
+    },
+    "repositoryCategory": {
+     "@description": "Specifies the category of the repository, e.g., Collaboration, Instant, or Favorites.",
+     "type": "cds.String"
+    },
+    "isVersionEnabled": {
+     "@description": "Support multiple versions of documents.",
+     "type": "cds.String"
+    },
+    "isVirusScanEnabled": {
+     "@description": "Scan files for viruses before upload.",
+     "type": "cds.String"
+    },
+    "skipVirusScanForLargeFile": {
+     "@description": "No virus scan for files larger than 400 MB.",
+     "type": "cds.String"
+    },
+    "hashAlgorithms": {
+     "@description": "Generate content hash for all uploaded documents.",
+     "type": "cds.String"
+    },
+    "isThumbnailEnabled": {
+     "@description": "Enable quick preview of uploaded documents.",
+     "type": "cds.String"
+    },
+    "isEncryptionEnabled": {
+     "@description": "Encrypt sensitive data stored in the repository.",
+     "type": "cds.String"
+    },
+    "isClientCacheEnabled": {
+     "@description": "Set the value to True if you want to enable cache.",
+     "type": "cds.String"
+    },
+    "externalId": {
+     "@description": "Unique identifier for the repsitory.",
+     "type": "cds.String"
+    },
+    "isContentBridgeEnabled": {
+     "@description": "The parameter is mandatory only for SAP S/4HANA attachment service scenarios.",
+     "type": "cds.String"
+    },
+    "repositoryParams": {
+     "items": {
+      "elements": {
+       "paramName": {
+        "type": "cds.String",
+        "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+        "@Core.Example.Value": "classificationEnabled - To classify documents based on type of document and default value is set to false."
+       },
+       "paramValue": {
+        "type": "cds.String"
+       }
+      }
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.External_Repo_Request": {
+   "elements": {
+    "repository": {
+     "type": "Administrative.Operations_types.Repository_Request",
+     "@mandatory": true
+    },
+    "connection": {
+     "type": "Administrative.Operations_types.Connection_Request",
+     "@mandatory": true
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Connection_Request": {
+   "elements": {
+    "destinationName": {
+     "@description": "Name of the destionation use to configure the external repository.",
+     "type": "cds.String",
+     "@mandatory": true
+    },
+    "displayName": {
+     "@description": "Display the name for the destination.",
+     "type": "cds.String"
+    },
+    "description": {
+     "@description": "Description for the destination.",
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Repository_Request": {
+   "elements": {
+    "displayName": {
+     "@description": "Name of the repository displayed in the application.",
+     "type": "cds.String",
+     "@mandatory": true
+    },
+    "description": {
+     "@description": "Additional Description for the repository",
+     "type": "cds.String"
+    },
+    "repositoryType": {
+     "@description": "The value external refers to any repository other than the SAP Document Management Service hosted repositories.",
+     "type": "cds.String",
+     "@mandatory": true
+    },
+    "repositoryId": {
+     "@description": "CMIS ID of your repository",
+     "type": "cds.String",
+     "@mandatory": true
+    },
+    "externalId": {
+     "@description": "Unique ID for the repository",
+     "type": "cds.String"
+    },
+    "repositoryParams": {
+     "items": {
+      "type": "Administrative.Operations_types.RepositoryParams"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Repository": {
+   "elements": {
+    "cmisRepositoryId": {
+     "type": "cds.String"
+    },
+    "createdTime": {
+     "type": "cds.String"
+    },
+    "description": {
+     "type": "cds.String"
+    },
+    "id": {
+     "type": "cds.String"
+    },
+    "lastUpdatedTime": {
+     "type": "cds.String"
+    },
+    "name": {
+     "type": "cds.String"
+    },
+    "repositoryCategory": {
+     "type": "cds.String"
+    },
+    "repositoryParams": {
+     "items": {
+      "type": "Administrative.Operations_types.RepositoryParams"
+     }
+    },
+    "repositorySubType": {
+     "type": "cds.String"
+    },
+    "repositoryType": {
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.RepoAndConnectionInfos": {
+   "elements": {
+    "connection": {
+     "type": "Administrative.Operations_types.Connection"
+    },
+    "repository": {
+     "type": "Administrative.Operations_types.Repository"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.List_a_repo": {
+   "elements": {
+    "repoAndConnectionInfos": {
+     "type": "Administrative.Operations_types.RepoAndConnectionInfos"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Sync_repos": {
+   "elements": {
+    "message": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "Sync successful"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Usage_storage": {
+   "elements": {
+    "metric": {
+     "type": "cds.String"
+    },
+    "month": {
+     "type": "cds.String"
+    },
+    "numberOfConsumers": {
+     "type": "cds.String"
+    },
+    "perTenantStorageUsageList": {
+     "items": {
+      "type": "Administrative.Operations_types.Storage_data"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Storage_data": {
+   "elements": {
+    "numberOfRepositories": {
+     "type": "cds.String"
+    },
+    "storageUsagePerRepository": {
+     "type": "Administrative.Operations_types.Per_repo"
+    },
+    "tenantId": {
+     "type": "cds.String"
+    },
+    "tenantSubDomain": {
+     "type": "cds.Integer"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Per_repo": {
+   "elements": {
+    "metrics": {
+     "type": "cds.String"
+    },
+    "repositoryId": {
+     "type": "cds.String"
+    },
+    "repositoryName": {
+     "type": "cds.String"
+    },
+    "usage": {
+     "type": "cds.Integer"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Usage_api": {
+   "elements": {
+    "metric": {
+     "type": "cds.String"
+    },
+    "month": {
+     "type": "cds.String"
+    },
+    "numberOfConsumers": {
+     "type": "cds.String"
+    },
+    "perTenantApiUsageList": {
+     "items": {
+      "type": "Administrative.Operations_types.Tenant_data"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Tenant_data": {
+   "elements": {
+    "tenantId": {
+     "type": "cds.String"
+    },
+    "tenantSubDomain": {
+     "type": "cds.String"
+    },
+    "units": {
+     "type": "cds.String"
+    },
+    "usage": {
+     "type": "cds.Integer"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Delete_repos": {
+   "elements": {
+    "message": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "All Repositories associated with the instance have been deleted."
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Delete_repo": {
+   "elements": {
+    "message": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "Repository with id:06a23283-f3djdjdjjddjdj deleted."
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Update_repo": {
+   "elements": {
+    "repository": {
+     "type": "Administrative.Operations_types.Update_repository_fields"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Update_repo_external": {
+   "elements": {
+    "repository": {
+     "items": {
+      "type": "Administrative.Operations_types.Update_external_repository_fields"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Update_repository_fields": {
+   "elements": {
+    "description": {
+     "@description": "Additional description for the Repository",
+     "type": "cds.String"
+    },
+    "isVirusScanEnabled": {
+     "@description": "Scan files for viruses before upload",
+     "type": "cds.String"
+    },
+    "skipVirusScanForLargeFile": {
+     "@description": "No virus scan for uploading files larger than 400 MB",
+     "type": "cds.String"
+    },
+    "isThumbnailEnabled": {
+     "@description": "Enable quick preview of uploaded documents",
+     "type": "cds.String"
+    },
+    "isClientCacheEnabled": {
+     "@description": "Set the value to True if you want to enable cache.",
+     "type": "cds.String"
+    },
+    "repositoryParams": {
+     "items": {
+      "elements": {
+       "paramName": {
+        "type": "cds.String",
+        "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+        "@Core.Example.Value": "fileExtensions"
+       },
+       "paramValue": {
+        "type": "cds.String",
+        "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+        "@Core.Example.Value": "{type:allow, list:[pdf, txt, png, jpeg, docx]}"
+       }
+      }
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Update_external_repository_fields": {
+   "elements": {
+    "repositoryParams": {
+     "items": {
+      "elements": {
+       "paramName": {
+        "@description": "contentServer - Content Server Destination Name to bypass abap layer for s/4HANA reposiotries.",
+        "type": "cds.String"
+       },
+       "paramValue": {
+        "@description": "contentServer - Content Server Destination Name. ",
+        "type": "cds.String"
+       }
+      }
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.OffBoard_Status": {
+   "elements": {
+    "bytesWritten": {
+     "type": "cds.Integer",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": 3
+    },
+    "path": {
+     "type": "cds.String"
+    },
+    "percentage": {
+     "type": "cds.Integer",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": 3
+    },
+    "repositoryId": {
+     "type": "cds.String"
+    },
+    "repositorySizeInBytes": {
+     "type": "cds.Integer",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": 3
+    },
+    "status": {
+     "type": "cds.String"
+    },
+    "timeStamp": {
+     "type": "cds.Decimal"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Create_Config": {
+   "elements": {
+    "configName": {
+     "type": "cds.String"
+    },
+    "configValue": {
+     "type": "cds.String"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Update_Config": {
+   "elements": {
+    "id": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "421429e1-f9b3-4c7b-8c65-5f4d97b64efc"
+    },
+    "configName": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "tempspaceMaxContentSize"
+    },
+    "configValue": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "8000"
+    },
+    "serviceInstanceId": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "842f2d25-bdaf-434b-9505-f5bf6b5119ed"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Delete_Config": {
+   "elements": {
+    "message": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "{}"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Configs_api": {
+   "items": {
+    "type": "Administrative.Operations_types.Config_Detail"
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Config_Detail": {
+   "elements": {
+    "configName": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "blockedFileExtensions"
+    },
+    "configValue": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "bat,dmg,pdf,txt"
+    },
+    "createdTime": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "2022-12-09T11:26:46.038Z"
+    },
+    "id": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "421429e1-f9b3-4c7b-8c65-5f4d97b64efc"
+    },
+    "lastUpdatedTime": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "2022-12-09T11:26:46.038Z"
+    },
+    "serviceInstanceId": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "af2163c5-7d3e-442a-83c5-7612d7fb7c80"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Export_Status": {
+   "elements": {
+    "path": {
+     "type": "cds.String"
+    },
+    "percentage": {
+     "type": "cds.Integer",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": 3
+    },
+    "repositoryId": {
+     "type": "cds.String"
+    },
+    "repositorySizeInBytes": {
+     "type": "cds.Integer",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": 3
+    },
+    "status": {
+     "type": "cds.String"
+    },
+    "timeStamp": {
+     "type": "cds.Decimal"
+    },
+    "packages": {
+     "items": {
+      "type": "Administrative.Operations_types.Export_data"
+     }
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Export_data": {
+   "elements": {
+    "packageId": {
+     "type": "cds.Integer",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": 3
+    },
+    "size": {
+     "type": "cds.Integer",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": 46952
+    },
+    "status": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "COMPLETED"
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Restore_instance_success": {
+   "elements": {
+    "message": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "Service instance restoration successful."
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Restore_instance_fail": {
+   "elements": {
+    "message": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "Service Instance restoration failed."
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Restore_repo_fail": {
+   "elements": {
+    "message": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "Repository restoration failed."
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Restore_repo_no_repo": {
+   "elements": {
+    "message": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "Repository restoration failed. <id> not found in the list of deleted repositories."
+    }
+   },
+   "kind": "type"
+  },
+  "Administrative.Operations_types.Restore_instance_no_instance": {
+   "elements": {
+    "message": {
+     "type": "cds.String",
+     "@Core.Example.$Type": "Core.PrimitiveExampleValue",
+     "@Core.Example.Value": "Service Instance restoration failed. <instance_id> not found in the list of deleted service instances."
+    }
+   },
+   "kind": "type"
+  }
+ },
+ "meta": {
+  "creator": "cds-import-openapi"
+ }
+}

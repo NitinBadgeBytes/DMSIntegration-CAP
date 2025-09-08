@@ -1,0 +1,358 @@
+{
+  "openapi": "3.0.0",
+  "x-odata-version": "4.0",
+  "info": {
+    "title": "Create Folder",
+    "description": "It creates a folder object of the speciﬁed type in the speciﬁed location. It should not have repetitive folder names and properties that must be applied to the newly created folder should be present",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://{subdomain}.cfapps.{region}.hana.ondemand.com",
+      "description": "Testing Server",
+      "variables":
+        {
+          "subdomain" : {"default": ""},
+          "region": {"default": ""}
+        }
+    }
+  ],
+  "security": [
+    {
+      "OAuth2": []
+    }
+  ],
+  "x-sap-stateInfo": {
+    "state": "Active"
+  },
+  "x-sap-shortText": "Creates a folder in the specified location of a repository.",
+  "tags": [
+    {
+      "name": "Create Folder"
+    }
+  ],
+  "paths": {
+    "/browser/{repository_id}/root": {
+      "post": {
+        "tags": [
+          "Create Folder"
+        ],
+        "parameters": [
+          {
+            "name": "repository_id",
+            "in": "path",
+            "description": "The repository to be used is identified using repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cmisaction": {
+                    "description": "In order to perform this particluar operation in a Repository,cmisaction parameter in an HTTP POST request must be:createFolder",
+                    "type": "string",
+                    "example": "createFolder"
+                  },
+                  "propertyId[0]": {
+                    "type": "string",
+                    "example": "cmis:name"
+                  },
+                  "propertyValue[0]": {
+                    "description": "Includes the value of propertyid[0]",
+                    "type": "string",
+                    "example": "test"
+                  },
+                  "propertyId[1]": {
+                    "type": "string",
+                    "example": "cmis:objectTypeId"
+                  },
+                  "propertyValue[1]": {
+                    "description": "Includes the value of propertyid[1]",
+                    "type": "string",
+                    "example": "cmis:folder"
+                  },
+                  "succinct": {
+                    "description": "Acts as a query parameter",
+                    "type": "boolean",
+                    "example": "true"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Creates a folder in the root location of a repository",
+        "description": "It creates a folder object of the speciﬁed type in the repository's root folder. It should not have repetitive folder names and properties that must be applied to the newly created folder should be present",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "4XX":{
+            "description": "Invalid flow",
+            "content":{
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalidflow"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/browser/{repository_id}/root/{directory_path}": {
+      "post": {
+        "tags": [
+          "Create Folder"
+        ],
+        "parameters": [
+          {
+            "name": "repository_id",
+            "in": "path",
+            "description": "The repository to be used is identified using repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "directory_path",
+            "in": "path",
+            "description": "Path to create the folder.",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cmisaction": {
+                    "description": "In order to perform this particluar operation in a Repository,cmisaction parameter in an HTTP POST request must be:createFolder",
+                    "type": "string",
+                    "example": "createFolder"
+                  },
+                  "propertyId[0]": {
+                    "type": "string",
+                    "example": "cmis:name"
+                  },
+                  "propertyValue[0]": {
+                    "description": "Includes the value of propertyid[0]",
+                    "type": "string",
+                    "example": "test"
+                  },
+                  "propertyId[1]": {
+                    "type": "string",
+                    "example": "cmis:objectTypeId"
+                  },
+                  "propertyValue[1]": {
+                    "description": "Includes the value of propertyid[1]",
+                    "type": "string",
+                    "example": "cmis:folder"
+                  },
+                  "succinct": {
+                    "description": "Acts as a query parameter",
+                    "type": "boolean",
+                    "example": "true"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Creates a folder in the speciﬁed location of a repository",
+        "description": "It creates a folder object of the speciﬁed type in the speciﬁed location. It should not have repetitive folder names and properties that must be applied to the newly created folder should be present",
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "4XX":{
+            "description": "Invalid flow",
+            "content":{
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalidflow"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "object": {
+        "type": "object",
+        "properties": {
+          "succinctProperties": {
+            "type": "object",
+            "properties": {
+              "cmis:objectId": {
+                "type": "string",
+                "example": "-R5rxKz01Ysn21yxQ72NuzRBlEvMDowHnEDQjS5xSwQ"
+              },
+              "sap:parentIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": "2e2ccfd00007511ba28e9d06"
+                }
+              },
+              "cmis:name": {
+                "type": "string",
+                "example": "test"
+              },
+              "cmis:lastModifiedBy": {
+                "type": "string",
+                "example": "sb-1e6079ca-5822-41e0-9789-93a2f066d534!b32286|sdm-di-SDM_DI_QUAL-qual!b6551"
+              },
+              "cmis:objectTypeId": {
+                "type": "string",
+                "example": "cmis:folder"
+              },
+              "cmis:lastModificationDate": {
+                "type": "number",
+                "example": 1625157532241
+              },
+              "cmis:createdBy": {
+                "type": "string",
+                "example": "sb-1e6079ca-5822-41e0-9789-93a2f066d534!b32286|sdm-di-SDM_DI_QUAL-qual!b6551"
+              },
+              "cmis:baseTypeId": {
+                "type": "string",
+                "example": "cmis:folder"
+              },
+              "cmis:parentId": {
+                "type": "string",
+                "example": "2e2ccfd00007511ba28e9d06"
+              },
+              "sap:owner": {
+                "type": "string",
+                "example": "sb-1e6079ca-5822-41e0-9789-93a2f066d534!b32286|sdm-di-SDM_DI_QUAL-qual!b6551"
+              },
+              "cmis:creationDate": {
+                "type": "number",
+                "example": 1625157532241
+              },
+              "cmis:changeToken": {
+                "type": "string",
+                "example": 2
+              }
+            }
+          },
+          "exactACL": {
+            "type": "boolean"
+          }
+        }
+      },
+      "error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "error",
+            "example": "internal server error"
+          }
+        }
+      },
+      "invalidflow": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "error"
+          },
+          "status":{
+            "type":"string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+       "OAuth2": {
+        "type": "oauth2",
+        "x-stable":true,
+        "description": "To use this API, you need to obtain the OAuth client credentials (client ID and secret) from SAP Document Management. After that, pass these client credentials to the SAP API token endpoint to obtain an access token.<br/>Permissions: Admin for Document Management, integration option via the scope SDM_Admin",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://{identityzone}.authentication.{region}.hana.ondemand.com/oauth/token",
+            "scopes": {}
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,2133 @@
+{
+  "openapi": "3.0.0",
+  "x-odata-version": "4.0",
+  "info": {
+    "title": "Administrative Operations",
+    "description": "These APIs uses the SAP Document Management service, Integration Option to perform various administrative operations. Using these APIs, you can perform various actions like onboard, offboard, edit, synchronize, call for repository and access the Rest APIs to get the usage details of processed repositories.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://{subdomain}.cfapps.{region}.hana.ondemand.com",
+      "description": "Testing Server",
+      "variables": {
+        "subdomain": {
+          "default": ""
+        },
+        "region": {
+          "default": ""
+        }
+      }
+    }
+  ],
+  "security": [
+    {
+      "OAuth2": []
+    }
+  ],
+  "x-sap-stateInfo": {
+    "state": "Active"
+  },
+  "x-sap-shortText": "Enables you to onboard, offboard, count, fetch, edit, synchronise, and collect usage information of repositories",
+  "tags": [
+    {
+      "name": "Repository Management"
+    },
+    {
+      "name": "Repository Configuration"
+    },
+    {
+      "name": "Repository Export"
+    },
+    {
+      "name": "Usage Statistics"
+    },
+    {
+      "name": "Service Restore"
+    },
+    {
+      "name": "Repository Offboard (Deprecated)"
+    }
+  ],
+  "paths": {
+    "/rest/v2/repositories": {
+      "get": {
+        "tags": [
+          "Repository Management"
+        ],
+        "summary": "Retrieve all added repositories",
+        "description": "The API retrieves all repositories you have added by making a GET request. If only one repository exists, the response will be an object; if multiple repositories exist, the response will be an array.",
+        "responses": {
+          "200": {
+            "description": "Successful response (for a single repository). For repositories' count greater than 1, value of property 'repoAndConnectionInfos' will be an array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/List_a_repo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Repository Management"
+        ],
+        "summary": "Onboards new repositories with specified parameters.",
+        "description": "The Repository Management API allows you to seamlessly onboard new repositories within your environment. By making a POST request with the appropriate parameters, a new repository is created.",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Internal_Repo_Request"
+                  },
+                  {
+                    "$ref": "#/components/schemas/External_Repo_Request"
+                  }
+                ]
+              },
+              "examples": {
+                "Internal Repository": {
+                  "value": "{\r\n  \"repository\": {\r\n\t\t\"displayName\": \"Name of the repository\",\r\n\t\t\"description\": \"Description for the repository\",\r\n\t\t\"repositoryType\": \"internal\",\r\n\t\t\"isVersionEnabled\":\"true\",\r\n\t\t\"isVirusScanEnabled\":\"true\",\r\n\t\t\"skipVirusScanForLargeFile\": \"false\",\n\t\t\"isThumbnailEnabled\": \"false\",\n\t\t\"isEncryptionEnabled\": \"false\",\n\t\t\"isClientCacheEnabled\": \"false\",\r\n\t\t\"hashAlgorithms\":\"SHA-256\",\r\n                 \"isContentBridgeEnabled\" : \"true\",\r\n\t         \"externalId\" : \"Unique name for the repository\"\r\n, \r\n\t\"repositoryParams\":[ {\n            \"paramName\" :\"changeLogDuration\",\n            \"paramValue\": \"24\"\n        }]\r\n    }\r\n}"
+                },
+                "External Repository": {
+                  "value": "{\r\n  \"repository\": {\r\n\t\"displayName\": \"Name of the repository\",\r\n\t\"description\": \"Description for the repository\",\r\n\t\"repositoryType\": \"external\",\r\n\t\"repositoryId\": \"CMIS repository ID\",\r\n\t\"externalId\": \"Unique name for the repository\",\r\n\t\"repositoryParams\":[ {\r\n            \"paramName\" :\"contentServer\",\r\n            \"paramValue\": \"<CONTENT_SERVER_DESTINATION_NAME>\"\r\n        },{\r\n            \"paramName\" :\"useContentServerDownload\",\r\n            \"paramValue\": \"True\"\r\n        }]\r\n  },\r\n    \"connection\": {\r\n    \"destinationName\": \"Name of the destination\"\r\n  }\r\n}"
+                },
+                "Favorites Repository": {
+                  "value": "{\r\n  \"repository\": {\r\n\t\t\"displayName\": \"Favorites\",\r\n\t\t\"repositoryType\": \"internal\",\r\n\t\"repositoryCategory\" : \"favorites\"\r\n   }\r\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Repository"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Repository Management"
+        ],
+        "summary": "Deletes all onboarded repositories",
+        "description": "The API deletes all onboarded repositories using a DELETE request. A successful response indicates that all repositories have been removed.",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Delete_repos"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/repositories/{id}": {
+      "get": {
+        "tags": [
+          "Repository Management"
+        ],
+        "summary": "Retrieve specific repository details",
+        "description": "The API retrieves the details of a specific repository using a GET request with the repository ID. A successful response returns the information for that particular repository.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepoAndConnectionInfos"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid repository id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalid_repo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Repository Management"
+        ],
+        "summary": "Update metadata parameters of a repository",
+        "description": "Updates the metadata parameters of a repository using a PUT request. A successful response reflects the new parameters for your repository.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Update_repo"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Update_repo_external"
+                  }
+                ]
+              },
+              "examples": {
+                "Internal Repository": {
+                  "value": "{\r\n  \"repository\": {\r\n\t\t\"description\": \"Updated description for the repository\",\r\n\t\t\"isVirusScanEnabled\":\"true\",\r\n\t\t\"skipVirusScanForLargeFile\": \"true\",\n\t\t\"isThumbnailEnabled\":\"true\",\r\n\t\t\"isClientCacheEnabled\": \"true\"\r\n,\r\n\t\"repositoryParams\":[ {\n            \"paramName\" :\"changeLogDuration\",\n            \"paramValue\": \"168\"\n        }]}}"
+                },
+                "External Repository": {
+                  "value": "{\r\n\"repository\": {\r\n\t\"description\": \"newdescription\",\r\n\t\"repositoryParams\": [\r\n    \t{\r\n    \t\"paramName\": \"contentServer\",\r\n    \t\"paramValue\": \"NEW_CONTENT_SERVER_DESTINATION_NAME\"\r\n    \t}\r\n    ]\r\n  }\r\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Repository"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid param",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "You are not allowed to update the repository parameter: isThumbnailEnabled"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid repository id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalid_repo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Repository Management"
+        ],
+        "summary": "Delete a repository",
+        "description": "Deletes a specific repository using a DELETE request with a unique repository ID. A successful response confirms the removal of the specified repository.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Delete_repo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid repository id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalid_repo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/repositories/sync": {
+      "get": {
+        "tags": [
+          "Repository Management"
+        ],
+        "summary": "Sync metadata of all repositories",
+        "description": "Syncs the metadata of all repositories using a GET request as an administrator. A successful response confirms the synchronization with the Document Management Service, Integration Option.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sync_repos"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/repositories/sync/{id}": {
+      "get": {
+        "tags": [
+          "Repository Management"
+        ],
+        "summary": "Sync metadata of a specific repository",
+        "description": "Syncs the metadata of a specific repository using a GET request as an administrator. A successful response confirms the synchronization with Document Management Service, Integration Option.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sync_repos"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid repository id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/invalid_repo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/repositories/count": {
+      "get": {
+        "tags": [
+          "Repository Management"
+        ],
+        "summary": "Count all added repositories",
+        "description": "The API returns the total number of repositories you have added by making a GET request. A successful response provides a count of all repositories.",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/usage/api": {
+      "get": {
+        "tags": [
+          "Usage Statistics"
+        ],
+        "summary": "Check API usage of service instance",
+        "description": "Checks the API usage of a service instance using a GET request. A successful response provides the number of API calls made by the service instance. By default, the response shows the API calls made in the current month by each tenant consuming the service instance.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usage_api"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/usage/storage": {
+      "get": {
+        "tags": [
+          "Usage Statistics"
+        ],
+        "summary": "Check storage usage of service instance",
+        "description": "Checks the storage usage of a service instance using a GET request. A successful response returns the bytes consumed by the service instance. By default, it shows the storage usage for each repository by the consuming tenants in the current month.",
+        "parameters": [
+          {
+            "name": "unit",
+            "description": "Allowed values are KB, MB, GB, and TB; if this optional query parameter is not specified, the default unit is Bytes.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "MB"
+          },
+          {
+            "name": "fromMonth",
+            "description": "Enter the month's numeric value. If fromYear is not specified, the current year is presumed.",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "05"
+          },
+          {
+            "name": "fromYear",
+            "description": "Enter the year; the month and year must be no more than 6 months old from the current month and year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2023"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Usage_storage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/repositoryOffBoard/{id}?cmisaction=repositoryOffBoard": {
+      "post": {
+        "tags": [
+          "Repository Offboard (Deprecated)"
+        ],
+        "summary": "Offboard Repository",
+        "description": "A successful response to the POST request returns the repository offboard request submitted.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Repository Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/repositoryOffBoard/{id}?cmisselector=repositoryStatus": {
+      "get": {
+        "tags": [
+          "Repository Offboard (Deprecated)"
+        ],
+        "summary": "Status of Repository Offboard",
+        "description": "A successful response to the GET request for repository offboard status.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OffBoard_Status"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Repository Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/repositoryOffBoard/{id}?cmisaction=getRepositoryDocument": {
+      "get": {
+        "tags": [
+          "Repository Offboard (Deprecated)"
+        ],
+        "summary": "Download of offboarded repository",
+        "description": "A successful response to the GET request to download the offboarded repository.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Downloaded"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Repository Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v3/repositories/export/{id}": {
+      "post": {
+        "tags": [
+          "Repository Export"
+        ],
+        "summary": "Initiate repository metadata export",
+        "description": "A successful response to a POST request returns the status of the repository metadata export initiation.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v3/repositories/export/status/{id}": {
+      "get": {
+        "tags": [
+          "Repository Export"
+        ],
+        "summary": "Status of repository metadata export",
+        "description": "A successful response to a GET request for the status of a specific metadata export request submitted for the repository id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Export_Status"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Repository Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v3/repositories/export/download/{id}/{packageId}": {
+      "get": {
+        "tags": [
+          "Repository Export"
+        ],
+        "summary": "Download exported metadata of the repository with a valid packageId",
+        "description": "A successful response to a GET request to download the exported zip file with the packageId.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "packageId",
+            "in": "path",
+            "description": "Package ID received in export status",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Downloaded"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid repository ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/deleted/repositories": {
+      "get": {
+        "tags": [
+          "Service Restore"
+        ],
+        "summary": "Retrieve all deleted repositories",
+        "description": "A successful response to the GET request returns all the repositories you have deleted. If there is only one deleted repository, the response will be an object. If there are two or more deleted repositories, the response will be an array.",
+        "responses": {
+          "200": {
+            "description": "Successful response (for a single deleted repository). For repositories' count greater than 1, value of property 'repoAndConnectionInfos' will be an array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/List_a_repo"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/deleted/repositories/{id}/restore": {
+      "post": {
+        "tags": [
+          "Service Restore"
+        ],
+        "summary": "Restore a particular repository",
+        "description": "A successful response to the post request indicates that the deleted repository has been successfully restored.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Repository id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Repository"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid repository id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restore_repo_no_repo"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restore_repo_fail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/deleted/instances/{instance_id}/restore": {
+      "post": {
+        "tags": [
+          "Service Restore"
+        ],
+        "summary": "Restore a deleted service instance",
+        "description": "A successful response to the post request indicates that the repositories of the deleted service instance has been successfully restored to the present service instance.",
+        "parameters": [
+          {
+            "name": "instance_id",
+            "in": "path",
+            "description": "Id of the deleted service instance",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restore_instance_success"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid repository id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restore_instance_no_instance"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restore_instance_fail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/configs": {
+      "post": {
+        "tags": [
+          "Repository Configuration"
+        ],
+        "summary": "Configure repository settings",
+        "description": "The API allows you to set specific parameters to manage your repository settings effectively. A successful POST request will create a configuration based on the parameters provided. \n\n **blockedFileExtensions** - List of file extensions that are blocked during upload. \n\n **tempspaceMaxContentSize** - Specifies the maximum file size that can be uploaded.  \n\n **isCrossDomainMappingAllowed** - Manage cross-domain mapping if your domain is different from the Google Workspace domain.",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Create_Config"
+              },
+              "example": [
+                {
+                  "configName": "blockedFileExtensions",
+                  "configValue": "bat,dmg,txt"
+                },
+                {
+                  "configName": "tempspaceMaxContentSize",
+                  "configValue": "1024"
+                },
+                {
+                  "configName": "isCrossDomainMappingAllowed",
+                  "configValue": "true"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Config_Detail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Repository Configuration"
+        ],
+        "summary": "Retrieve repository configurations",
+        "description": "A successful response to the GET request returns all Configs.",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Configs_api"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rest/v2/configs/{id}": {
+      "put": {
+        "tags": [
+          "Repository Configuration"
+        ],
+        "summary": "Update repository configuration parameters",
+        "description": "A successful response to the PUT request reflects the updated parameters for your repository configuration.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Config Id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Update_Config"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Config_Detail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Repository Configuration"
+        ],
+        "summary": "Delete a repository configuration",
+        "description": "A successful response to the DELETE request removes the configuration.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Config Id",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Delete_Config"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "invalid_repo": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "There is no repository with the given ID:a123"
+          }
+        }
+      },
+      "error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Internal server error."
+          }
+        }
+      },
+      "Count": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          }
+        }
+      },
+      "Connection": {
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "destination": {
+            "type": "string"
+          }
+        }
+      },
+      "RepositoryParams": {
+        "properties": {
+          "paramName": {
+            "type": "string",
+            "description": "contentServer - Specifies the Content Server destination name to bypass the ABAP layer for SAP S/4HANA repositories.  useContentServerDownload - Enables downloading via the content server."
+          },
+          "paramValue": {
+            "type": "string",
+            "description": "contentServer - Content Server Destination Name. useContentServerDownload - True or False"
+          }
+        }
+      },
+      "Internal_Repo_Request": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "description": "Name of the Repository."
+          },
+          "description": {
+            "type": "string",
+            "description": "Additional description for the Repository."
+          },
+          "repositoryType": {
+            "type": "string",
+            "description": "Specifies the type of repository, e.g., internal."
+          },
+          "repositoryCategory": {
+            "type": "string",
+            "description": "Specifies the category of the repository, e.g., Collaboration, Instant, or Favorites."
+          },
+          "isVersionEnabled": {
+            "type": "string",
+            "description": "Support multiple versions of documents."
+          },
+          "isVirusScanEnabled": {
+            "type": "string",
+            "description": "Scan files for viruses before upload."
+          },
+          "skipVirusScanForLargeFile": {
+            "type": "string",
+            "description": "No virus scan for files larger than 400 MB."
+          },
+          "hashAlgorithms": {
+            "type": "string",
+            "description": "Generate content hash for all uploaded documents."
+          },
+          "isThumbnailEnabled": {
+            "type": "string",
+            "description": "Enable quick preview of uploaded documents."
+          },
+          "isEncryptionEnabled": {
+            "type": "string",
+            "description": "Encrypt sensitive data stored in the repository."
+          },
+          "isClientCacheEnabled": {
+            "type": "string",
+            "description": "Set the value to True if you want to enable cache."
+          },
+          "externalId": {
+            "type": "string",
+            "description": "Unique identifier for the repsitory."
+          },
+          "isContentBridgeEnabled": {
+            "type": "string",
+            "description": "The parameter is mandatory only for SAP S/4HANA attachment service scenarios."
+          },
+          "repositoryParams": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "paramName": {
+                  "type": "string",
+                  "example": "classificationEnabled - To classify documents based on type of document and default value is set to false."
+                },
+                "paramValue": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "displayName",
+          "repositoryType"
+        ]
+      },
+      "External_Repo_Request": {
+        "type": "object",
+        "properties": {
+          "repository": {
+            "$ref": "#/components/schemas/Repository_Request"
+          },
+          "connection": {
+            "$ref": "#/components/schemas/Connection_Request"
+          }
+        },
+        "required": [
+          "connection",
+          "repository"
+        ]
+      },
+      "Connection_Request": {
+        "type": "object",
+        "properties": {
+          "destinationName": {
+            "type": "string",
+            "description": "Name of the destionation use to configure the external repository."
+          },
+          "displayName": {
+            "type": "string",
+            "description": "Display the name for the destination."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description for the destination."
+          }
+        },
+        "required": [
+          "destinationName"
+        ]
+      },
+      "Repository_Request": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "description": "Name of the repository displayed in the application."
+          },
+          "description": {
+            "type": "string",
+            "description": "Additional Description for the repository"
+          },
+          "repositoryType": {
+            "type": "string",
+            "description": "The value external refers to any repository other than the SAP Document Management Service hosted repositories."
+          },
+          "repositoryId": {
+            "type": "string",
+            "description": "CMIS ID of your repository"
+          },
+          "externalId": {
+            "type": "string",
+            "description": "Unique ID for the repository"
+          },
+          "repositoryParams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RepositoryParams"
+            }
+          }
+        },
+        "required": [
+          "displayName",
+          "repositoryId",
+          "repositoryType"
+        ]
+      },
+      "Repository": {
+        "properties": {
+          "cmisRepositoryId": {
+            "type": "string"
+          },
+          "createdTime": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "lastUpdatedTime": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "repositoryCategory": {
+            "type": "string"
+          },
+          "repositoryParams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RepositoryParams"
+            }
+          },
+          "repositorySubType": {
+            "type": "string"
+          },
+          "repositoryType": {
+            "type": "string"
+          }
+        }
+      },
+      "RepoAndConnectionInfos": {
+        "properties": {
+          "connection": {
+            "$ref": "#/components/schemas/Connection"
+          },
+          "repository": {
+            "$ref": "#/components/schemas/Repository"
+          }
+        }
+      },
+      "List_a_repo": {
+        "properties": {
+          "repoAndConnectionInfos": {
+            "$ref": "#/components/schemas/RepoAndConnectionInfos"
+          }
+        }
+      },
+      "Sync_repos": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Sync successful"
+          }
+        }
+      },
+      "Usage_storage": {
+        "properties": {
+          "metric": {
+            "type": "string"
+          },
+          "month": {
+            "type": "string"
+          },
+          "numberOfConsumers": {
+            "type": "string"
+          },
+          "perTenantStorageUsageList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Storage_data"
+            }
+          }
+        }
+      },
+      "Storage_data": {
+        "properties": {
+          "numberOfRepositories": {
+            "type": "string"
+          },
+          "storageUsagePerRepository": {
+            "$ref": "#/components/schemas/Per_repo"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "tenantSubDomain": {
+            "type": "integer"
+          }
+        }
+      },
+      "Per_repo": {
+        "properties": {
+          "metrics": {
+            "type": "string"
+          },
+          "repositoryId": {
+            "type": "string"
+          },
+          "repositoryName": {
+            "type": "string"
+          },
+          "usage": {
+            "type": "integer"
+          }
+        }
+      },
+      "Usage_api": {
+        "properties": {
+          "metric": {
+            "type": "string"
+          },
+          "month": {
+            "type": "string"
+          },
+          "numberOfConsumers": {
+            "type": "string"
+          },
+          "perTenantApiUsageList": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tenant_data"
+            }
+          }
+        }
+      },
+      "Tenant_data": {
+        "properties": {
+          "tenantId": {
+            "type": "string"
+          },
+          "tenantSubDomain": {
+            "type": "string"
+          },
+          "units": {
+            "type": "string"
+          },
+          "usage": {
+            "type": "integer"
+          }
+        }
+      },
+      "Delete_repos": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "All Repositories associated with the instance have been deleted."
+          }
+        }
+      },
+      "Delete_repo": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Repository with id:06a23283-f3djdjdjjddjdj deleted."
+          }
+        }
+      },
+      "Update_repo": {
+        "properties": {
+          "repository": {
+            "$ref": "#/components/schemas/Update_repository_fields"
+          }
+        }
+      },
+      "Update_repo_external": {
+        "properties": {
+          "repository": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Update_external_repository_fields"
+            }
+          }
+        }
+      },
+      "Update_repository_fields": {
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Additional description for the Repository"
+          },
+          "isVirusScanEnabled": {
+            "type": "string",
+            "description": "Scan files for viruses before upload"
+          },
+          "skipVirusScanForLargeFile": {
+            "type": "string",
+            "description": "No virus scan for uploading files larger than 400 MB"
+            
+          },
+          "isThumbnailEnabled": {
+            "type": "string",
+            "description": "Enable quick preview of uploaded documents"
+          },
+          "isClientCacheEnabled": {
+            "type": "string",
+            "description": "Set the value to True if you want to enable cache."
+          },
+          "repositoryParams": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "paramName": {
+                  "type": "string",
+                  "example": "fileExtensions"
+                },
+                "paramValue": {
+                  "type": "string",
+                  "example": "{type:allow, list:[pdf, txt, png, jpeg, docx]}"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Update_external_repository_fields": {
+        "properties": {
+          "repositoryParams": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "paramName": {
+                  "type": "string",
+                   "description": "contentServer - Content Server Destination Name to bypass abap layer for s/4HANA reposiotries."
+                  
+                },
+                "paramValue": {
+                  "type": "string",
+                   "description": "contentServer - Content Server Destination Name. "
+                }
+              }
+            }
+          }
+        }
+      },
+      "OffBoard_Status": {
+        "properties": {
+          "bytesWritten": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "path": {
+            "type": "string"
+          },
+          "percentage": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "repositoryId": {
+            "type": "string"
+          },
+          "repositorySizeInBytes": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "status": {
+            "type": "string"
+          },
+          "timeStamp": {
+            "type": "number"
+          }
+        }
+      },
+      "Create_Config": {
+        "type": "object",
+        "properties": {
+          "configName": {
+            "type": "string"
+          },
+          "configValue":{
+            "type": "string"
+          }
+        }
+      },
+
+      
+
+
+
+
+     
+      "Update_Config": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "421429e1-f9b3-4c7b-8c65-5f4d97b64efc"
+          },
+          "configName": {
+            "type": "string",
+            "example": "tempspaceMaxContentSize"
+          },
+          "configValue": {
+            "type": "string",
+            "example": "8000"
+          },
+          "serviceInstanceId": {
+            "type": "string",
+            "example": "842f2d25-bdaf-434b-9505-f5bf6b5119ed"
+          }
+        }
+      },
+      "Delete_Config": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "{}"
+          }
+        }
+      },
+      "Configs_api": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Config_Detail"
+        }
+      },
+      "Config_Detail": {
+        "properties": {
+          "configName": {
+            "type": "string",
+            "example": "blockedFileExtensions"
+          },
+          "configValue": {
+            "type": "string",
+            "example": "bat,dmg,pdf,txt"
+          },
+          "createdTime": {
+            "type": "string",
+            "example": "2022-12-09T11:26:46.038Z"
+          },
+          "id": {
+            "type": "string",
+            "example": "421429e1-f9b3-4c7b-8c65-5f4d97b64efc"
+          },
+          "lastUpdatedTime": {
+            "type": "string",
+            "example": "2022-12-09T11:26:46.038Z"
+          },
+          "serviceInstanceId": {
+            "type": "string",
+            "example": "af2163c5-7d3e-442a-83c5-7612d7fb7c80"
+          }
+        }
+      },
+      "Export_Status": {
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "percentage": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "repositoryId": {
+            "type": "string"
+          },
+          "repositorySizeInBytes": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "status": {
+            "type": "string"
+          },
+          "timeStamp": {
+            "type": "number"
+          },
+          "packages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Export_data"
+            }
+          }
+        }
+      },
+      "Export_data": {
+        "properties": {
+          "packageId": {
+            "type": "integer",
+            "format": "int32",
+            "example": 3
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32",
+            "example": 46952
+          },
+          "status": {
+            "type": "string",
+            "example": "COMPLETED"
+          }
+        }
+      },
+      "Restore_instance_success": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Service instance restoration successful."
+          }
+        }
+      },
+      "Restore_instance_fail": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Service Instance restoration failed."
+          }
+        }
+      },
+      "Restore_repo_fail": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Repository restoration failed."
+          }
+        }
+      },
+      "Restore_repo_no_repo": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Repository restoration failed. <id> not found in the list of deleted repositories."
+          }
+        }
+      },
+      "Restore_instance_no_instance": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Service Instance restoration failed. <instance_id> not found in the list of deleted service instances."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "OAuth2": {
+        "type": "oauth2",
+        "x-stable": true,
+        "description": "To use this API, you must obtain OAuth client credentials (client ID and secret) from SAP Document Management Service. Pass these credentials to the SAP API token endpoint to receive an access token.<br/> **Permissions Required**: Admin for Document Management Service, Integration Option via the scope SDM_Admin",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://{identityzone}.authentication.{region}.hana.ondemand.com/oauth/token",
+            "scopes": {}
+          }
+        }
+      }
+    }
+  }
+}

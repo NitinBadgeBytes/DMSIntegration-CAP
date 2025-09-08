@@ -1,0 +1,53 @@
+{
+  "name": "DMSProject",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@cap-js/hana": "^2",
+    "@sap-cloud-sdk/connectivity": "^4.1.1",
+    "@sap-cloud-sdk/http-client": "^4.1.1",
+    "@sap-cloud-sdk/resilience": "^4.1.1",
+    "@sap/cds": "^9",
+    "@sap/xssec": "^4",
+    "express": "^4",
+    "form-data": "^4.0.4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@cap-js/cds-types": "^0.13.0",
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": ">=8"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  },
+  "cds": {
+    "requires": {
+      "DMSAdmin": {
+        "kind": "odata",
+        "csrf": true,
+        "csrfInBatch": true,
+        "credentials": {
+          "destination": "DMSAdmin",
+          "requestTimeout": "30000"
+        }
+      },
+      "[production]": {
+        "auth": "dummy"
+      },
+      "Administrative.Operations": {
+        "kind": "rest",
+        "model": "srv/external/AdminAPI"
+      },
+      "Create.Folder": {
+        "kind": "rest",
+        "model": "srv/external/CreateFolderApi"
+      }
+    }
+  }
+}
