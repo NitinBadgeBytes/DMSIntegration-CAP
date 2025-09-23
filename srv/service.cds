@@ -44,7 +44,7 @@ service DMS {
 
      action CreateFolderInPath(
     repositoryId   : String,    // repository id
-    directoryPath  : String,    // folder path inside repository
+    directoryPath  : String,    
     properties     : array of {
       propertyId    : String;
       propertyValue : String;
@@ -62,5 +62,35 @@ service DMS {
   media        : LargeBinary
 ) returns String;
 
+//For MOve Object
+  action MoveObject(
+    repositoryId  : String,
+    objectId      : String,
+    sourceFolderId: String,
+    targetFolderId: String
+  ) returns String;
+  
+ action filedownload(
+    repositoryId : String,
+    objectId     : String,
+    filename     : String,
+    preview: Boolean
+  ) returns String;
 
+  //Copy Document
+    action CopyDocument(
+    repositoryId : String,
+    objectId     : String,   
+    sourceId     : String    
+  ) returns String;
+  
+  //Create Link
+
+  action CreateLink(
+    repositoryId     : String,
+    linkName         : String,
+    url              : String,
+    parentFolderPath : String
+  ) returns String;
+  
 }

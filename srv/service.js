@@ -1,6 +1,8 @@
 const cds = require('@sap/cds');
 const FormData = require("form-data");
 const stream = require('stream');
+const mime = require("mime-types");
+const { executeHttpRequest } = require("@sap-cloud-sdk/core");
 
 module.exports = cds.service.impl(async function () {
   
@@ -27,40 +29,7 @@ module.exports = cds.service.impl(async function () {
     }
   });
 
-  //Create Repositories
-
-  // this.on('CreateRepository', async (req) => {
-  //   console.log("CreateRepository called");
-
-  //   const { repository } = req.data;
-
-  //   // Mandatory validation
-  //   if (!repository.displayName || !repository.repositoryType) {
-  //     return "Error: displayName and repositoryType are mandatory.";
-  //   }
-
-  //   try {
-  //     console.log("Connecting to DMSAdmin destination...");
-  //     const sdm = await cds.connect.to('DMSAdmin');
-  //     console.log("Connected to DMSAdmin destination:", !!sdm);
-
-  //     const response = await sdm.send({
-  //       method: 'POST',
-  //       path: '/rest/v2/repositories',
-  //       data: repository,
-  //       headers: {
-  //         "Content-Type": "application/json"
-  //       }
-  //     });
-
-  //     console.log("Create Repository Response:", response);
-  //     return response;
-  //   } catch (err) {
-  //     console.error("Error creating repository:", err.message);
-  //     return `Error: ${err.message}`;
-  //   }
-  // });
-  // Create Repositories
+  
 this.on('CreateRepository', async (req) => {
     console.log("CreateRepository called");
 
@@ -142,20 +111,6 @@ this.on('CreateRepository', async (req) => {
         }
     });
 
-
-    // DELETE handler - delete repository
-    // this.on("DeleteRepository", async (req) => {
-    //     const { ID } = req.data;
-
-    //     // Ensure the repository exists
-    //     const repo = await SELECT.one.from(Repository).where({ ID });
-    //     if (!repo) return req.error(404, `Repository with ID ${ID} not found`);
-
-    //     // Perform delete
-    //     await DELETE.from(Repository).where({ ID });
-
-    //     return `Repository ${ID} deleted successfully`;
-    // });
    
     this.on('SyncRepositories', async (req) => {
     try {
@@ -333,10 +288,16 @@ this.on('GetObjectLocation', async (req) => {
   }
 });
 
-//  Create Document
- this.on('CreateDocument', async (req) => {
+this.on("CreateDocument", async (req) => {
   try {
-    const { repositoryId, fileName, media } = req.data; 
+    const { repositoryId, fileName, media } = req.data;
+
+    if (!repositoryId || !fileName || !media) {
+      return req.error(400, "repositoryId, fileName, and media are required");
+    }
+
+    // Convert Base64 → Buffer
+    const buffer = Buffer.from(media, "base64");
 
     const form = new FormData();
     form.append("cmisaction", "createDocument");
@@ -345,16 +306,18 @@ this.on('GetObjectLocation', async (req) => {
     form.append("propertyId[1]", "cmis:name");
     form.append("propertyValue[1]", fileName);
     form.append("succinct", "true");
-    form.append("filename", fileName);
     form.append("includeAllowableActions", "true");
-    form.append("media", media); // 
+    form.append("media", buffer, { filename: fileName });
+
+    
+    const formBuffer = await formToBuffer(form);
 
     const dms = await cds.connect.to("DMSAdmin");
 
     const response = await dms.send({
       method: "POST",
       path: `/browser/${repositoryId}/root`,
-      data: form,
+      data: formBuffer,
       headers: form.getHeaders()
     });
 
@@ -366,10 +329,18 @@ this.on('GetObjectLocation', async (req) => {
   }
 });
 
+
 // Create Document in Particular Path
 this.on("CreateDocumentInPath", async (req) => {
   try {
     const { repositoryId, directoryPath, fileName, media } = req.data;
+
+    if (!repositoryId || !directoryPath || !fileName || !media) {
+      return req.error(400, "repositoryId, directoryPath, fileName, and media are required");
+    }
+
+    // Convert Base64 → Buffer
+    const buffer = Buffer.from(media, "base64");
 
     const form = new FormData();
     form.append("cmisaction", "createDocument");
@@ -380,14 +351,18 @@ this.on("CreateDocumentInPath", async (req) => {
     form.append("succinct", "true");
     form.append("filename", fileName);
     form.append("includeAllowableActions", "true");
-    form.append("media", media); // binary file
+    form.append("media", buffer, { filename: fileName });
+
+    // 🔑 Convert FormData stream → Buffer
+    const formBuffer = await formToBuffer(form);
 
     const dms = await cds.connect.to("DMSAdmin");
 
     const response = await dms.send({
       method: "POST",
+      // ensure directoryPath is URI-encoded to handle spaces/special chars
       path: `/browser/${repositoryId}/root/${encodeURI(directoryPath)}`,
-      data: form,
+      data: formBuffer,
       headers: form.getHeaders()
     });
 
@@ -398,6 +373,7 @@ this.on("CreateDocumentInPath", async (req) => {
     return { error: err.message, details: err.response?.data };
   }
 });
+
 
 //Get Repository Tree
 
@@ -463,25 +439,141 @@ this.on("GetRepositoryTree", async (req) => {
     return { error: err.message };
   }
 });
-//Document Download
+
+ this.on("filedownload", async (req) => {
+    try {
+      const { repositoryId, objectId, filename, preview } = req.data || {};
+      if (!repositoryId || !objectId || !filename) {
+        return req.error(400, "repositoryId, objectId and filename are required");
+      }
+
+      // Fetch raw binary from DMS via destination
+      const response = await executeHttpRequest(
+        { destinationName: "DMSAdmin" },
+        {
+          method: "GET",
+          url: `/browser/${repositoryId}/root`,
+          params: {
+            cmisselector: "content",
+            objectId: objectId,
+            download: "attachment",
+            filename: filename
+          },
+          responseType: "arraybuffer"   // IMPORTANT: get raw bytes
+        }
+      );
+
+      // Convert ArrayBuffer to Node Buffer
+      const buffer = Buffer.from(response.data);
+
+      console.log(`File download OK, size: ${buffer.length} bytes`);
+
+      // Detect MIME type
+      const contentType = mime.lookup(filename) || "application/octet-stream";
+
+      // Prepare HTTP headers
+      const res = req.res;
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Content-Length", buffer.length);
+
+      // Decide inline (preview) vs attachment (download)
+      if (preview && (contentType.startsWith("image/") || contentType === "application/pdf")) {
+        res.setHeader("Content-Disposition", `inline; filename="${filename}"`);
+      } else {
+        res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      }
+
+      // Send binary response
+      res.end(buffer);
+
+      // Stop CAP from sending JSON
+      return;
+
+    } catch (err) {
+      console.error("Download error:", {
+        message: err.message,
+        stack: err.stack,
+        status: err.response?.status,
+        data: err.response?.data,
+      });
+      return req.error(500, "File download failed: " + err.message);
+    }
+  });
 
 
+  //Move Folder Moves an object from source folder to the targeted folder
 
+    this.on("MoveObject", async (req) => {
+    try {
+      const { repositoryId, objectId, sourceFolderId, targetFolderId } = req.data;
 
+      if (!repositoryId || !objectId || !sourceFolderId || !targetFolderId) {
+        return req.error(400, "repositoryId, objectId, sourceFolderId, and targetFolderId are required");
+      }
 
+      const dms = await cds.connect.to("DMSAdmin");
 
+      // Prepare form-data
+      const form = new FormData();
+      form.append("cmisaction", "move");
+      form.append("objectId", objectId);
+      form.append("sourceFolderId", sourceFolderId);
+      form.append("targetFolderId", targetFolderId);
 
+      // Convert to Buffer like in CreateFolder
+      const formBuffer = await formToBuffer(form);
 
+      // Send to DMS
+      const response = await dms.send({
+        method: "POST",
+        path: `/browser/${repositoryId}/root`,
+        data: formBuffer,
+        headers: form.getHeaders()
+      });
 
+      return JSON.stringify(response);
+    } catch (err) {
+      console.error("Error moving object:", err.message, err.response?.data);
+      return { error: err.message, details: err.response?.data };
+    }
+  });
 
+  //Copy Document Copies document from source folder to the targeted folder
+  this.on("CopyDocument", async (req) => {
+    try {
+      const { repositoryId, objectId, sourceId } = req.data;
 
+      if (!repositoryId || !objectId || !sourceId) {
+        return req.error(400, "repositoryId, objectId (target folder), and sourceId (document) are required");
+      }
 
+      const dms = await cds.connect.to("DMSAdmin");
 
+      // Prepare form-data
+      const form = new FormData();
+      form.append("cmisaction", "createDocumentFromSource");
+      form.append("objectId", objectId);  // target folder id
+      form.append("sourceId", sourceId);  // source document id
 
+      // Convert FormData to Buffer
+      const formBuffer = await formToBuffer(form);
 
+      // Send request to DMS
+      const response = await dms.send({
+        method: "POST",
+        path: `/browser/${repositoryId}/root`,
+        data: formBuffer,
+        headers: form.getHeaders()
+      });
 
+      return JSON.stringify(response);
+    } catch (err) {
+      console.error("Error copying document:", err.message, err.response?.data);
+      return { error: err.message, details: err.response?.data };
+    }
+  });   
 
-
+// Create Link 
 
 
 });

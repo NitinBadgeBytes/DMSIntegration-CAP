@@ -8,12 +8,14 @@
   "dependencies": {
     "@cap-js/hana": "^2",
     "@sap-cloud-sdk/connectivity": "^4.1.1",
+    "@sap-cloud-sdk/core": "^1.54.2",
     "@sap-cloud-sdk/http-client": "^4.1.1",
     "@sap-cloud-sdk/resilience": "^4.1.1",
     "@sap/cds": "^9",
     "@sap/xssec": "^4",
     "express": "^4",
-    "form-data": "^4.0.4"
+    "form-data": "^4.0.4",
+    "mime-types": "^3.0.1"
   },
   "engines": {
     "node": ">=20"
