@@ -86,11 +86,17 @@ service DMS {
   
   //Create Link
 
-  action CreateLink(
-    repositoryId     : String,
-    linkName         : String,
-    url              : String,
-    parentFolderPath : String
-  ) returns String;
+  // action CreateLink(
+  //   repositoryId     : String,
+  //   linkName         : String,
+  //   url              : String,
+  //   parentFolderPath : String
+  // ) returns String;
   
+    action CreateShare(
+        repositoryId : UUID,
+        folderName   : String,
+        succinct     : Boolean
+    ) returns  String;
+
 }

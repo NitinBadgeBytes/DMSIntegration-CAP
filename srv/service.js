@@ -573,7 +573,103 @@ this.on("GetRepositoryTree", async (req) => {
     }
   });   
 
-// Create Link 
+// Create share
+// this.on("CreateShare", async (req) => {
+//     try {
+//         const { repositoryId, folderName, succinct } = req.data;
+
+//         if (!repositoryId || !folderName) {
+//             return req.error(400, "repositoryId and folderName are required");
+//         }
+
+//         // Prepare form-data exactly like your Postman request
+//         const form = new FormData();
+//         form.append("cmisaction", "createFolder");
+//         form.append("propertyId[0]", "cmis:name");
+//         form.append("propertyValue[0]", folderName);
+//         form.append("propertyId[1]", "cmis:objectTypeId");
+//         form.append("propertyValue[1]", "cmis:folder");
+
+//         if (succinct !== undefined) {
+//             form.append("succinct", succinct.toString());
+//         }
+
+//         // Convert form-data to Buffer
+//         const formBuffer = await formToBuffer(form);
+
+//         // Connect to DMS destination
+//         const dms = await cds.connect.to("DMSAdmin");
+
+//         // Send request to root of repository
+//         const response = await dms.send({
+//             method: "POST",
+//             path: `/browser/${repositoryId}/root`,
+//             data: formBuffer,
+//             headers: form.getHeaders()
+//         });
+
+//         //return JSON.stringify(response);
+//         return response; // return as object
+
+//     } catch (err) {
+//         console.error("Error creating share:", err.message, err.response?.data);
+//         return { error: err.message, details: err.response?.data };
+//     }
+// });
+
+this.on('CreateFolder', async (req) => {
+  try {
+    const { repositoryId, properties, succinct } = req.data;
+
+    if (!repositoryId || !properties || properties.length === 0) {
+      return req.error(400, "repositoryId and properties are required");
+    }
+
+    // Prepare form-data
+    const form = new FormData();
+    form.append('cmisaction', 'createFolder');
+
+    properties.forEach((prop, idx) => {
+      form.append(`propertyId[${idx}]`, prop.propertyId);
+      form.append(`propertyValue[${idx}]`, prop.propertyValue);
+    });
+
+    if (succinct !== undefined) {
+      form.append('succinct', succinct.toString());
+    }
+
+    // Convert FormData stream to Buffer
+    const formBuffer = await formToBuffer(form);
+
+    // Get destination
+    const dms = await cds.connect.to('DMSAdmin');
+
+    // Send request with buffer body
+    const response = await dms.send({
+      method: 'POST',
+      path: `/browser/${repositoryId}/root`,
+      data: formBuffer,
+      headers: form.getHeaders()
+    });
+
+    // 🔹 Return the response as JSON object directly
+    // If the API returns a string in "value", parse it
+    let result = response;
+    if (response?.value && typeof response.value === 'string') {
+      try {
+        result = JSON.parse(response.value);
+      } catch (e) {
+        console.warn("Could not parse response.value, returning original:", e.message);
+      }
+    }
+
+    return result;  // frontend will now get Postman-like JSON
+
+  } catch (err) {
+    console.error("Error creating folder:", err.message, err.response?.data);
+    return { error: err.message, details: err.response?.data };
+  }
+});
 
 
 });
